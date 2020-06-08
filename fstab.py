@@ -18,6 +18,8 @@ import os
 import re
 import tempfile
 
+import six
+
 
 class Line(object):
 
@@ -131,13 +133,13 @@ class Fstab(object):
         self.lines = []
     
     def open_file(self, filespec, mode):
-        if type(filespec) in (str, unicode):
-            return file(filespec, mode)
+        if type(filespec) in [six.text_type, six.string_types]:
+            return open(filespec, mode)
         else:
             return filespec
 
     def close_file(self, f, filespec):
-        if type(filespec) in (str, unicode):
+        if type(filespec) in [six.text_type, six.string_types]:
             f.close()
 
     def get_perms(self, filename):
@@ -179,7 +181,7 @@ class Fstab(object):
         
         """
         
-        if type(filespec) in (str, unicode):
+        if type(filespec) in [six.text_type, six.string_types]:
             # We create the temporary file in the directory (/etc) that the
             # file exists in. This is so that we can do an atomic rename
             # later, and that only works inside one filesystem. Some systems
@@ -197,7 +199,7 @@ class Fstab(object):
             f.write(line.raw)
         self.close_file(filespec, f)
 
-        if type(filespec) in (str, unicode):
+        if type(filespec) in [six.text_type, six.string_types]:
             self.chmod_file(tempname, self.get_perms(filespec))
             self.link_file(filespec, filespec + ".bak")
             self.rename_file(tempname, filespec)
